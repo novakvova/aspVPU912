@@ -1,6 +1,9 @@
-﻿@model IEnumerable<CarViewModel> 
+﻿@model HomeIndexViewModel
 
 <h1>Список авто</h1>
+
+@await Html.PartialAsync("_Search", Model.Search)
+
 <a asp-action="Create" class="btn btn-success">Додати авто</a>
 <table class="table">
     <thead>
@@ -12,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Cars)
         {
             <tr>
                 <th scope="row">@item.Id</th>
@@ -23,3 +26,5 @@
         }
     </tbody>
 </table>
+
+@await Html.PartialAsync("_Pagination", Model)

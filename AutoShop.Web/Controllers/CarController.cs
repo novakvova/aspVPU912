@@ -1,6 +1,8 @@
-﻿using AutoShop.Domain;
+﻿using AutoMapper;
+using AutoShop.Domain;
 using AutoShop.Domain.Entities;
 using AutoShop.Web.Models;
+using Bogus;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,40 +14,71 @@ namespace AutoShop.Web.Controllers
     public class CarController : Controller
     {
         private readonly AppEFContext _context;
-        public CarController(AppEFContext context)
+        //використовуємо авто мепер
+        private readonly IMapper _mapper;
+
+        public CarController(AppEFContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+            //GenerateAuto();
         }
 
-        public IActionResult Index()
+        private void GenerateAuto()
         {
-            List<CarViewModel> model = _context.Cars
-                .Select(x => new CarViewModel
-                {
-                    Id=x.Id,
-                    Mark=x.Mark,
-                    Model=x.Model,
-                    Year=x.Year
-                }).ToList();
-                
-                
-            //    new List<CarViewModel>
-            //{
-            //    new CarViewModel
-            //    {
-            //        Id = 1,
-            //        Mark = "BWM",
-            //        Model = "X6",
-            //        Year = 2021
-            //    },
-            //    new CarViewModel
-            //    {
-            //        Id = 2,
-            //        Mark = "Лада",
-            //        Model = "2106",
-            //        Year = 1986
-            //    }
-            //};
+            var endDate = DateTime.Now;
+            var startDate = new DateTime(endDate.Year - 10,
+                endDate.Month, endDate.Day);
+            //використовуємо богус для генерації
+            var faker = new Faker<Car>("uk")
+                .RuleFor(x=>x.Mark, f=>f.Vehicle.Manufacturer())
+                .RuleFor(x=>x.Model, f=>f.Vehicle.Model())
+                .RuleFor(x=>x.Year, f=>f.Date.Between(startDate, endDate).Year);
+            int n = 1000;
+            for (int i = 0; i < n; i++)
+            {
+                var car = faker.Generate();
+                _context.Cars.Add(car);
+                _context.SaveChanges();
+            }
+            
+        }
+
+        public IActionResult Index(SearchCarIndexModel search, int page = 1)
+        {
+            int showItems = 10;
+            var query = _context.Cars.AsQueryable();
+            if(!string.IsNullOrEmpty(search.Mark))
+            {
+                query = query.Where(x => x.Mark.ToLower().Contains(search.Mark.ToLower()));
+            }
+            //кількість записів, що є в БД
+            int countItems = query.Count();
+            //12 штук, на 1 сторінці 3 записа, скільки буде сторінок
+            //13/3 = 4,0 - 5 сторінок
+            var pageCount = (int)Math.Ceiling(countItems/(double)showItems);
+
+            if (pageCount == 0) pageCount = 1;
+
+            if(page>pageCount)
+            {
+                return RedirectToAction(nameof(this.Index), new { page = pageCount });
+            }
+
+            int skipItems = (page - 1) * showItems;
+
+            query = query.Skip(skipItems).Take(showItems);
+
+
+            HomeIndexViewModel model = new HomeIndexViewModel();
+            model.Cars = query
+                .Select(x => _mapper.Map<CarViewModel>(x))
+                .ToList();
+            model.Page = page;
+            model.PageCount = pageCount;
+            model.Search = search;
+
             return View(model);
         }
         

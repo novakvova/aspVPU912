@@ -1,4 +1,5 @@
 using AutoShop.Domain;
+using AutoShop.Web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,10 @@ namespace AutoShop.Web
         {
             services.AddDbContext<AppEFContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddAutoMapper(
+                typeof(CarProfile)
+                );
 
             services.AddControllersWithViews();
         }

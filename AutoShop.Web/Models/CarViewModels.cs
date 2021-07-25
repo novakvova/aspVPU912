@@ -14,6 +14,11 @@ namespace AutoShop.Web.Models
         public int Year { get; set; }
     }
 
+    public class SearchCarIndexModel
+    {
+        public string Mark { get; set; }
+    }
+
     public class CarCreateViewModel
     {
         [Display(Name ="Марка")]
