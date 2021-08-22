@@ -6,6 +6,7 @@ using Bogus;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -95,10 +96,23 @@ namespace AutoShop.Web.Controllers
             if (!ModelState.IsValid)
                 return View(carCreateView);
 
+            string fileName = "";
+            if(carCreateView.Image!=null)
+            {
+                var ext = Path.GetExtension(carCreateView.Image.FileName);
+                fileName = Path.GetRandomFileName() + ext;
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
+                var filePath = Path.Combine(dir, fileName);
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    carCreateView.Image.CopyTo(stream);
+                }
+            }
+
             Car car = new Car
             {
                 Mark= carCreateView.Mark,
-                Model= carCreateView.Model,
+                Model= fileName, //carCreateView.Model,
                 Year= carCreateView.Year
             };
             _context.Cars.Add(car);

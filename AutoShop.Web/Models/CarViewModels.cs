@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace AutoShop.Web.Models
         public string Mark { get; set; }
         [Display(Name ="Модель")]
         public string Model { get; set; }
+        [Display(Name = "Малюнок")]
+        public IFormFile Image { get; set; }
         [Display(Name ="Рік")]
         public int Year { get; set; }
     }
