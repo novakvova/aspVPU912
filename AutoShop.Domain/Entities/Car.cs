@@ -18,6 +18,9 @@ namespace AutoShop.Domain.Entities
         public string Model { get; set; }
         [Required, StringLength(255)]
         public string Mark { get; set; }
+
+        [StringLength(400)]
+        public string Image { get; set; }
         public int Year { get; set; }
     }
 }

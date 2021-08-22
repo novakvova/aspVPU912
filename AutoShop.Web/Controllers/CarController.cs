@@ -112,8 +112,9 @@ namespace AutoShop.Web.Controllers
             Car car = new Car
             {
                 Mark= carCreateView.Mark,
-                Model= fileName, //carCreateView.Model,
-                Year= carCreateView.Year
+                Model= carCreateView.Model,
+                Year= carCreateView.Year,
+                Image=fileName
             };
             _context.Cars.Add(car);
             _context.SaveChanges();

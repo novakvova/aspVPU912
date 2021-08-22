@@ -11,6 +11,7 @@
             <th scope="col">#</th>
             <th scope="col">Марка</th>
             <th scope="col">Модель</th>
+            <th scope="col">Image</th>
             <th scope="col">Рік</th>
         </tr>
     </thead>
@@ -20,8 +21,9 @@
             <tr>
                 <th scope="row">@item.Id</th>
                 <td>@item.Mark</td>
+                <td>@item.Model</td>
                 <td>
-                    <img src="/images/@item.Model" alt="Alternate Text" width="150" />    
+                    <img src="/images/@item.Image" alt="Alternate Text" width="150" />    
                 </td>
                 <td>@item.Year</td>
             </tr>
