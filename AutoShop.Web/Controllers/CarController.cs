@@ -51,23 +51,25 @@ namespace AutoShop.Web.Controllers
             var query = _context.Cars.AsQueryable();
             if(!string.IsNullOrEmpty(search.Mark))
             {
-                query = query.Where(x => x.Mark.ToLower().Contains(search.Mark.ToLower()));
+                query = query.Where(x => x.Mark.ToLower()
+                    .Contains(search.Mark.ToLower()));
             }
             //кількість записів, що є в БД
             int countItems = query.Count();
             //12 штук, на 1 сторінці 3 записа, скільки буде сторінок
-            //13/3 = 4,0 - 5 сторінок
+            //13/3 = 4,1 - 5 сторінок
             var pageCount = (int)Math.Ceiling(countItems/(double)showItems);
 
             if (pageCount == 0) pageCount = 1;
 
             if(page>pageCount)
             {
-                return RedirectToAction(nameof(this.Index), new { page = pageCount });
+                return RedirectToAction(nameof(this.Index), 
+                    new { page = pageCount, mark=search.Mark });
             }
 
             int skipItems = (page - 1) * showItems;
-
+            //20, 10
             query = query.Skip(skipItems).Take(showItems);
 
 
