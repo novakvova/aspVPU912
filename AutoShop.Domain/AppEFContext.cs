@@ -1,4 +1,8 @@
-﻿using AutoShop.Domain.Entities;
+﻿using AutoShop.Domain.Configuration.Identity;
+using AutoShop.Domain.Entities;
+using AutoShop.Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,14 +12,25 @@ using System.Threading.Tasks;
 
 namespace AutoShop.Domain
 {
-    public class AppEFContext : DbContext
+    public class AppEFContext : IdentityDbContext<AppUser, AppRole, long, IdentityUserClaim<long>,
+                                            AppUserRole, IdentityUserLogin<long>,
+                                            IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
         public AppEFContext(DbContextOptions<AppEFContext> options)
-            :base(options)
+            : base(options)
         {
 
         }
 
         public DbSet<Car> Cars { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            #region Identity
+            builder.ApplyConfiguration(new AppUserRoleConfiguration());
+            #endregion
+
+        }
     }
 }
