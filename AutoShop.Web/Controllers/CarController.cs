@@ -3,6 +3,7 @@ using AutoShop.Domain;
 using AutoShop.Domain.Entities;
 using AutoShop.Web.Models;
 using Bogus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace AutoShop.Web.Controllers
 {
+    [Authorize]
     public class CarController : Controller
     {
         private readonly AppEFContext _context;
@@ -86,11 +88,13 @@ namespace AutoShop.Web.Controllers
         }
         
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(CarCreateViewModel carCreateView)
         {
             if (!ModelState.IsValid)

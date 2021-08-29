@@ -4,7 +4,11 @@
 
 @await Html.PartialAsync("_Search", Model.Search)
 
-<a asp-action="Create" class="btn btn-success">Додати авто</a>
+@if (User.IsInRole("Admin"))
+{
+    <a asp-action="Create" class="btn btn-success">Додати авто</a>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -23,7 +27,7 @@
                 <td>@item.Mark</td>
                 <td>@item.Model</td>
                 <td>
-                    <img src="/images/@item.Image" alt="Alternate Text" width="150" />    
+                    <img src="/images/@item.Image" alt="Alternate Text" width="150" />
                 </td>
                 <td>@item.Year</td>
             </tr>
